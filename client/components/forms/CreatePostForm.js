@@ -1,18 +1,33 @@
+import React, { useState } from 'react';
+import { Editor, EditorState, RichUtils } from 'draft-js';
 import { Avatar, Button } from "antd";
-import dynamic from "next/dynamic";
 import { CameraOutlined, LoadingOutlined } from '@ant-design/icons';
-import "react-quill/dist/quill.snow.css";
-
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import 'draft-js/dist/Draft.css';
 
 const CreatePostForm = ({ content, setContent, postSubmit, handleImage, uploading, image }) => {
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
+  const handleEditorChange = (state) => {
+    setEditorState(state);
+    setContent(state.getCurrentContent().getPlainText());
+  };
+
+  const handleKeyCommand = (command) => {
+    const newState = RichUtils.handleKeyCommand(editorState, command);
+    if (newState) {
+      handleEditorChange(newState);
+      return 'handled';
+    }
+    return 'not-handled';
+  };
+
   return (
     <div className="card shadow">
       <div className="card-body pb-3">
-        <ReactQuill
-          theme="snow"
-          value={content}
-          onChange={setContent}
+        <Editor
+          editorState={editorState}
+          onChange={handleEditorChange}
+          handleKeyCommand={handleKeyCommand}
           placeholder="Write something..."
           className="form-control border-0"
         />
