@@ -16,7 +16,7 @@ import Link from "next/link";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { UserContext } from "../../context";
-import renderHTML from "react-render-html";
+import parse from "html-react-parser";
 
 const PostList = ({
   posts,
@@ -131,7 +131,7 @@ const PostList = ({
                 )}
               </div>
             </div>
-            <div style={contentStyle}>{renderHTML(post.content)}</div>
+            <div style={contentStyle}>{parse(post.content)}</div>
             {post.image && (
               <img src={post.image.url} alt="Post" style={imageStyle} />
             )}
@@ -173,8 +173,6 @@ const PostList = ({
             </div>
           </div>
         ))}
-        
-    
     </>
   );
 };
