@@ -1,4 +1,3 @@
-// pages/PostDetail.js
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -6,7 +5,7 @@ import { Avatar, IconButton, TextField, Button } from "@mui/material";
 import moment from "moment";
 import { DeleteOutlined } from "@mui/icons-material";
 import { toast } from "react-toastify";
-import renderHTML from "react-render-html";
+import parse from "html-react-parser";
 
 const PostDetail = () => {
   const router = useRouter();
@@ -87,7 +86,7 @@ const PostDetail = () => {
           </span>
         </div>
       </div>
-      <div style={{ marginTop: "20px" }}>{renderHTML(post.content)}</div>
+      <div style={{ marginTop: "20px" }}>{parse(post.content)}</div>
       {post.image && (
         <img
           src={post.image.url}
