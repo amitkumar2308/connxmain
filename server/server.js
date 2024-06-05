@@ -22,7 +22,11 @@ mongoose
 // Middlewares
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors(
+  origin" ["https://deploy-mern-1whq.vercel.app"],
+  methods: ["POST","GET"],
+  credentials: true
+));
 
 // Load Routes dynamically
 const routePath = join(__dirname, 'routes'); // Get the path to the routes directory
