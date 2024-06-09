@@ -42,7 +42,7 @@
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.4.5"
-  }
+  },
   "resolutions": {
     "@ant-design/colors": "5.0.0"
   }
