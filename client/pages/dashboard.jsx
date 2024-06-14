@@ -9,12 +9,6 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 const { TextArea } = Input;
 
-useEffect(() => {
-  // Client-side code that depends on `window`
-  console.log(window.innerWidth);
-}, []);
-
-
 const CommentModal = ({ visible, handleCancel, addComment, commentInput, setCommentInput, commentLoading, currentPost }) => {
   return (
     <Modal
@@ -59,6 +53,7 @@ const Dashboard = () => {
   const [visible, setVisible] = useState(false);
   const [currentPost, setCurrentPost] = useState({});
   const [commentLoading, setCommentLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false); // State to check if it's client side
   const router = useRouter();
 
   useEffect(() => {
@@ -70,6 +65,9 @@ const Dashboard = () => {
     } else {
       router.push("/login");
     }
+
+    // Set the isClient state to true when on the client side
+    setIsClient(true);
   }, []);
 
   const fetchUserPost = async () => {
@@ -264,7 +262,7 @@ const Dashboard = () => {
         </div>
        
         {/* Render the People sidebar conditionally based on screen size */}
-        {window.innerWidth > 768 && (
+        {isClient && window.innerWidth > 768 && (
           <div
             style={{
               flex: "1",
