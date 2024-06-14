@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import { readdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -13,30 +14,20 @@ const __dirname = dirname(__filename);
 const app = express();
 
 // Database connection
-const connectToDatabase = async () => {
-  try {
-    await mongoose.connect(process.env.DATABASE, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('Database connected');
-  } catch (error) {
-    console.error('DB connection error:', error);
-  }
-};
-
-connectToDatabase();
+mongoose.connect(process.env.DATABASE, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('Database connected'))
+.catch((err) => console.log('DB connection error =>', err));
 
 // Middlewares
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// CORS configuration (if necessary)
-// Vercel handles CORS headers automatically, so this might not be needed
-// Remove this if not necessary or configure in Vercel dashboard
-/*
+// CORS configuration
 const corsConfig = {
-  origin: '*',
+  origin: '*', // Change this to your frontend URL if applicable
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
@@ -44,23 +35,22 @@ const corsConfig = {
 };
 app.options('*', cors(corsConfig));
 app.use(cors(corsConfig));
-*/
 
 // Load Routes dynamically
 const routePath = join(__dirname, 'routes');
 const routeFiles = readdirSync(routePath);
 
-routeFiles.forEach(async (file) => {
+routeFiles.forEach((file) => {
   if (file.endsWith('.js')) {
-    const { default: route } = await import(`file://${join(routePath, file)}`);
-    app.use('/api', route);
+    const route = require(join(routePath, file)).default; // Require the route file
+    app.use('/api', route); // Mount the route under /api
   }
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
-    console.error(err);
+    console.log(err);
     return res.status(401).json({ error: 'Unauthorized' });
   }
   next();
@@ -71,10 +61,8 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-// Server listening
+// Listen
 const port = process.env.PORT || 8000;
-app.listen(port, () => {
-  console.log(`Server is running at port ${port}`);
-});
+app.listen(port, () => console.log(`Server is running at port ${port}`));
 
 export default app;
