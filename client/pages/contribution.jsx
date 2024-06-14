@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import CreatePostForm from "../components/forms/CreatePostForm.js";
-import PostList from "../components/cards/PostList.js";
-import People from "../components/cards/people.js";
+import CreatePostForm from "../components/forms/CreatePostForm.jsx";
+import PostList from "../components/cards/PostList.jsx";
+import People from "../components/cards/people.jsx";
 import Link from "next/link";
 import { Modal, Input, Button, Drawer , Avatar} from "antd"; // Import Drawer from antd
 import { UserOutlined , DeleteOutlined} from "@ant-design/icons"; // Import UserOutlined icon
