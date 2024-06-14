@@ -9,6 +9,12 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 const { TextArea } = Input;
 
+useEffect(() => {
+  // Client-side code that depends on `window`
+  console.log(window.innerWidth);
+}, []);
+
+
 const CommentModal = ({ visible, handleCancel, addComment, commentInput, setCommentInput, commentLoading, currentPost }) => {
   return (
     <Modal
