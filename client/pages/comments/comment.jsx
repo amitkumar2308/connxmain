@@ -3,6 +3,15 @@ import moment from "moment";
 import { Avatar } from "antd";
 
 const CommentPage = ({ comments }) => {
+  if (!comments || !Array.isArray(comments)) {
+    return (
+      <div>
+        <h1>Comments</h1>
+        <p>No comments available.</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h1>Comments</h1>
