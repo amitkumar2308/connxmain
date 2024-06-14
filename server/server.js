@@ -42,8 +42,11 @@ const routeFiles = readdirSync(routePath);
 
 routeFiles.forEach((file) => {
   if (file.endsWith('.js')) {
-    const route = require(join(routePath, file)).default; // Require the route file
-    app.use('/api', route); // Mount the route under /api
+    import(join(routePath, file)).then(module => {
+      app.use('/api', module.default);
+    }).catch(err => {
+      console.error(`Failed to load route file ${file}`, err);
+    });
   }
 });
 
