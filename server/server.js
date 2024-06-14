@@ -22,11 +22,7 @@ mongoose
 // Middlewares
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use(cors(
-  origin" [" "],
-  methods: ["POST","GET"],
-  credentials: true
-));
+app.use(cors());
 
 // Load Routes dynamically
 const routePath = join(__dirname, 'routes'); // Get the path to the routes directory
@@ -47,4 +43,8 @@ app.use((err, req, res, next) => {
 
 // Listen
 const port = process.env.PORT || 8000;
+
+app.use("/", (req, res) => {
+  res.send("Hello World!");
+});
 app.listen(port, () => console.log(`Server is running at port ${port}`));
