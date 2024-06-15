@@ -4,12 +4,18 @@ import { readdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
+import cors from 'cors';
+
+// Import User model and helper functions
+import User from "../models/user.js";
+import { hashPassword, comparePassword } from "../helpers/auth.js";
+import jwt from "jsonwebtoken";
+import { nanoid } from 'nanoid';
+import { sendTokenEmail } from "./emailconfig.js";
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+// Initialize Express application
 const app = express();
 
 // Middleware
@@ -17,16 +23,10 @@ app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://connx.vercel.app');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204); // Pre-flight request response
-  }
-  next();
-});
+app.use(cors({
+  origin: 'https://connx.vercel.app',
+  credentials: true,
+}));
 
 // MongoDB Connection
 mongoose.connect(process.env.DATABASE, {
@@ -37,15 +37,17 @@ mongoose.connect(process.env.DATABASE, {
   .catch(err => console.error('Database connection error:', err));
 
 // Load Routes dynamically
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const routePath = join(__dirname, 'routes');
 const routeFiles = readdirSync(routePath);
 
 routeFiles.forEach(async (file) => {
   if (file.endsWith('.js')) {
     try {
-      const module = await import(join(routePath, file));
-      if (module.default) {
-        app.use('/api', module.default);
+      const { default: routes } = await import(join(routePath, file));
+      if (routes) {
+        app.use('/api', routes); // Mount routes under /api prefix
       } else {
         console.error(`No default export found in ${file}`);
       }
@@ -67,6 +69,70 @@ app.use((err, req, res, next) => {
 // Default route
 app.get('/', (req, res) => {
   res.send('Hello World!');
+});
+
+// Register route
+app.post('/api/register', async (req, res) => {
+  const { username, email, password, confirmpassword } = req.body;
+  // validation
+  if (!username) return res.status(400).json({ error: "Username is Required" });
+  if (!email) return res.status(400).json({ error: "Email is Required" });
+  if (!password || password.length < 6)
+    return res.status(400).json({ error: "Password should be 6 characters long" });
+  if (password !== confirmpassword) return res.status(400).json({ error: "Password and Confirm Password doesn't match" });
+  // check if user already exists
+  const exist = await User.findOne({ email });
+  if (exist) return res.status(400).json({ error: "Email already exists" });
+
+  // hashed password
+  const hashedPassword = await hashPassword(password);
+  const newUser = new User({ username, email, password: hashedPassword, name: nanoid(6) });
+
+  try {
+    await newUser.save();
+    console.log("Registered User =>", newUser);
+    return res.json({ ok: true });
+  } catch (error) {
+    console.log("REGISTRATION FAILED =>", error);
+    return res.status(400).json({ error: "Registration failed. Please try again later." });
+  }
+});
+
+// Login route
+app.post('/api/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).send("User does not exist");
+
+    // Validate password
+    const isPasswordValid = await comparePassword(password, user.password);
+    if (!isPasswordValid) return res.status(400).send("Incorrect password");
+
+    // Generate JWT token
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+    // Remove sensitive information
+    user.password = undefined;
+    user.secret = undefined;
+
+    res.json({ token, user });
+  } catch (error) {
+    console.log("ERROR WHILE LOGIN =>", error);
+    return res.status(400).send("Error, please try again");
+  }
+});
+
+// Current user route
+app.get('/api/current-user', async (req, res) => {
+  try {
+    const user = await User.findById(req.auth._id);
+    res.json({ user });
+  } catch (error) {
+    console.log("Error while verifying token =>", error);
+    res.sendStatus(400);
+  }
 });
 
 // Listen
