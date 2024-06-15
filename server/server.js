@@ -19,22 +19,21 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
 const corsConfig = {
-  origin: 'https://connx.vercel.app/',
+  origin: 'https://connx.vercel.app', // Removed trailing slash
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  preflightContinue: false,
   optionsSuccessStatus: 204,
 };
 
-app.options('*', cors(corsConfig));
 app.use(cors(corsConfig));
 
 // MongoDB Connection
-await mongoose.connect(process.env.DATABASE, {
+mongoose.connect(process.env.DATABASE, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
-console.log('Database connected');
+})
+  .then(() => console.log('Database connected'))
+  .catch(err => console.error('Database connection error:', err));
 
 // Load Routes dynamically
 const routePath = join(__dirname, 'routes');
@@ -55,7 +54,7 @@ routeFiles.forEach(async (file) => {
   }
 });
 
-// Error handling middleware
+// Error handling middleware (must be placed after all routes and middleware)
 app.use((err, req, res, next) => {
   console.error(err);
   if (err.name === 'UnauthorizedError') {
@@ -74,4 +73,3 @@ const port = process.env.PORT || 8000;
 app.listen(port, () => console.log(`Server is running at port ${port}`));
 
 export default app;
-
