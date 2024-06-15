@@ -1,6 +1,5 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors';
 import { readdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -18,14 +17,16 @@ app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
-const corsConfig = {
-  origin: 'https://connx.vercel.app/api', // Removed trailing slash
-  credentials: true,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  optionsSuccessStatus: 204,
-};
-
-app.use(cors(corsConfig));
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://connx.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204); // Pre-flight request response
+  }
+  next();
+});
 
 // MongoDB Connection
 mongoose.connect(process.env.DATABASE, {
@@ -72,4 +73,4 @@ app.get('/', (req, res) => {
 const port = process.env.PORT || 8000;
 app.listen(port, () => console.log(`Server is running at port ${port}`));
 
-export default app;  
+export default app;
