@@ -1,16 +1,10 @@
-// server.js
-
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import { readdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
-import bcrypt from 'bcryptjs'; // For password hashing (if not already imported)
-import jwt from 'jsonwebtoken'; // For token generation (if not already imported)
-
-import User from './models/user.js'; // Import your User model
-import { requireSignIn } from './middleware/index.js'; // Import your middleware if needed
 
 dotenv.config();
 
@@ -25,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
 const corsConfig = {
-  origin: 'https://connx.vercel.app',
+  origin: 'https://connx.vercel.app', // Removed trailing slash
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   optionsSuccessStatus: 204,
@@ -41,69 +35,22 @@ mongoose.connect(process.env.DATABASE, {
   .then(() => console.log('Database connected'))
   .catch(err => console.error('Database connection error:', err));
 
-// Register route (manually)
-app.post('/api/register', async (req, res) => {
-  const { username, email, password, confirmPassword } = req.body;
+// Load Routes dynamically
+const routePath = join(__dirname, 'routes');
+const routeFiles = readdirSync(routePath);
 
-  // Validation
-  if (!username || !email || !password || !confirmPassword) {
-    return res.status(400).json({ error: 'All fields are required' });
-  }
-
-  if (password !== confirmPassword) {
-    return res.status(400).json({ error: 'Passwords do not match' });
-  }
-
-  try {
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: 'Email already exists' });
+routeFiles.forEach(async (file) => {
+  if (file.endsWith('.js')) {
+    try {
+      const module = await import(join(routePath, file));
+      if (module.default) {
+        app.use('/api', module.default);
+      } else {
+        console.error(`No default export found in ${file}`);
+      }
+    } catch (err) {
+      console.error(`Failed to load route file ${file}`, err);
     }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create new user
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword,
-    });
-
-    await newUser.save();
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
-    console.error('Registration error:', error);
-    res.status(500).json({ error: 'Registration failed. Please try again later.' });
-  }
-});
-
-// Login route (manually)
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    // Check if user exists
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    // Validate password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-
-    // Respond with token and user data (you may want to exclude sensitive data like passwords)
-    res.json({ token, user: { _id: user._id, username: user.username, email: user.email } });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ error: 'Login failed. Please try again later.' });
   }
 });
 
@@ -125,4 +72,4 @@ app.get('/', (req, res) => {
 const port = process.env.PORT || 8000;
 app.listen(port, () => console.log(`Server is running at port ${port}`));
 
-export default app;
+export default app;  
