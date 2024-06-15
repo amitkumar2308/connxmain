@@ -13,28 +13,29 @@ const __dirname = dirname(__filename);
 
 const app = express();
 
-// Database connection
-mongoose.connect(process.env.DATABASE, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('Database connected'))
-.catch((err) => console.log('DB connection error =>', err));
-
-// Middlewares
+// Middleware
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
 const corsConfig = {
-  origin: '*',
+  origin: 'https://connx.vercel.app/',
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
   optionsSuccessStatus: 204,
 };
+
 app.options('*', cors(corsConfig));
 app.use(cors(corsConfig));
+
+// MongoDB Connection
+mongoose.connect(process.env.DATABASE, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('Database connected'))
+.catch((err) => console.error('DB connection error:', err));
 
 // Load Routes dynamically
 const routePath = join(__dirname, 'routes');
@@ -49,11 +50,11 @@ routeFiles.forEach((file) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
+  console.error(err);
   if (err.name === 'UnauthorizedError') {
-    console.log(err);
     return res.status(401).json({ error: 'Unauthorized' });
   }
-  next();
+  return res.status(500).json({ error: 'Internal Server Error' });
 });
 
 // Default route
