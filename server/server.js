@@ -10,12 +10,9 @@ dotenv.config();
 const app = express();
 
 // Database connection
-mongoose.connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => console.log("Database connected"))
-.catch((err) => console.log("DB connection error =>", err));
+mongoose.connect(process.env.DATABASE)
+    .then(() => console.log("Database connected"))
+    .catch((err) => console.log("DB connection error =>", err));
 
 // Middlewares
 app.use(morgan('dev'));
@@ -27,9 +24,14 @@ app.use(cors({
 
 // Autoload Routes
 (async () => {
-    for (const file of readdirSync('./routes')) {
-        const route = await import(`./routes/${file}`);
-        app.use('/api', route.default);
+    const routesPath = './routes';
+    try {
+        for (const file of readdirSync(routesPath)) {
+            const route = await import(`${routesPath}/${file}`);
+            app.use('/api', route.default);
+        }
+    } catch (err) {
+        console.error(`Error loading routes: ${err.message}`);
     }
 })();
 
