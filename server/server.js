@@ -18,18 +18,8 @@ mongoose.connect(process.env.DATABASE)
 app.use(morgan('dev'));
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
-
-// Correct CORS configuration
-const allowedOrigins = ["https://connx.vercel.app"];
 app.use(cors({
-    origin: (origin, callback) => {
-        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
+    origin: ["https://connx.vercel.app"],
 }));
 
 // Autoload Routes
@@ -50,9 +40,6 @@ app.use((err, req, res, next) => {
     if (err.name === "UnauthorizedError") {
         console.log(err); // Log the error object
         return res.status(401).json({ error: "Unauthorized" });
-    }
-    if (err instanceof Error && err.message === 'Not allowed by CORS') {
-        return res.status(403).json({ error: 'CORS error' });
     }
     next();
 });
