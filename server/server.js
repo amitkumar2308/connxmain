@@ -1,10 +1,17 @@
+// server.js
+
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import { readdirSync } from 'fs';
+//import { readdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
+
+import postRoutes from './routes/post.js';
+
+// Import routes
+import authRoutes from './routes/auth.js'; // Adjust the path as necessary
 
 dotenv.config();
 
@@ -19,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
 const corsConfig = {
-  origin: 'https://connx.vercel.app', // Removed trailing slash
+  origin: 'https://connx.vercel.app',
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   optionsSuccessStatus: 204,
@@ -35,24 +42,9 @@ mongoose.connect(process.env.DATABASE, {
   .then(() => console.log('Database connected'))
   .catch(err => console.error('Database connection error:', err));
 
-// Load Routes dynamically
-const routePath = join(__dirname, 'routes');
-const routeFiles = readdirSync(routePath);
-
-routeFiles.forEach(async (file) => {
-  if (file.endsWith('.js')) {
-    try {
-      const module = await import(join(routePath, file));
-      if (module.default) {
-        app.use('/api', module.default);
-      } else {
-        console.error(`No default export found in ${file}`);
-      }
-    } catch (err) {
-      console.error(`Failed to load route file ${file}`, err);
-    }
-  }
-});
+// Use Routes
+app.use('/api', authRoutes); // Mount authRoutes under /api
+app.use('/api', postRoutes);
 
 // Error handling middleware (must be placed after all routes and middleware)
 app.use((err, req, res, next) => {
