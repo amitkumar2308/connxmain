@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
 const corsConfig = {
-  origin: 'https://connx.vercel.app', // Removed trailing slash
+  origin: 'https://connx.vercel.app/api', // Removed trailing slash
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   optionsSuccessStatus: 204,
