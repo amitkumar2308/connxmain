@@ -22,7 +22,7 @@ const Login = () => {
       // console.log(name, email, password, secret);
       setLoading(true);
       const { data } = await axios.post(
-        `https://connxserver.vercel.app/api/login`,
+        `/login`,
         {
           email,
           password,
