@@ -30,21 +30,28 @@ app.options('*', cors(corsConfig));
 app.use(cors(corsConfig));
 
 // MongoDB Connection
-mongoose.connect(process.env.DATABASE, {
+await mongoose.connect(process.env.DATABASE, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-})
-.then(() => console.log('Database connected'))
-.catch((err) => console.error('DB connection error:', err));
+});
+console.log('Database connected');
 
 // Load Routes dynamically
 const routePath = join(__dirname, 'routes');
 const routeFiles = readdirSync(routePath);
 
-routeFiles.forEach((file) => {
+routeFiles.forEach(async (file) => {
   if (file.endsWith('.js')) {
-    const route = require(join(routePath, file)).default;
-    app.use('/api', route);
+    try {
+      const module = await import(join(routePath, file));
+      if (module.default) {
+        app.use('/api', module.default);
+      } else {
+        console.error(`No default export found in ${file}`);
+      }
+    } catch (err) {
+      console.error(`Failed to load route file ${file}`, err);
+    }
   }
 });
 
@@ -66,4 +73,3 @@ app.get('/', (req, res) => {
 const port = process.env.PORT || 8000;
 app.listen(port, () => console.log(`Server is running at port ${port}`));
 
-export default app;
