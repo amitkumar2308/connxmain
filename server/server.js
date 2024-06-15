@@ -10,7 +10,7 @@ import dotenv from 'dotenv';
 import User from "../server/models/user.js";
 import { hashPassword,comparePassword } from "../server/helpers/auth.js";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+
 import {nanoid} from 'nanoid';
 
 
