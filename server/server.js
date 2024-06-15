@@ -43,8 +43,8 @@ mongoose.connect(process.env.DATABASE, {
   .catch(err => console.error('Database connection error:', err));
 
 // Use Routes
-app.use('/api', authRoutes); // Mount authRoutes under /api
-app.use('/api', postRoutes);
+app.use('/', authRoutes); // Mount authRoutes under /api
+app.use('/', postRoutes);
 
 // Error handling middleware (must be placed after all routes and middleware)
 app.use((err, req, res, next) => {
