@@ -27,24 +27,22 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
 const corsConfig = {
-  origin: '*', // Change this to your frontend URL if applicable
+  origin: process.env.CLIENT_URL, // Allow only your frontend URL
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
   optionsSuccessStatus: 204,
 };
-app.options('*', cors(corsConfig));
 app.use(cors(corsConfig));
+app.options('*', cors(corsConfig));
 
 // Load Routes dynamically
 const routePath = join(__dirname, 'routes');
-const routeFiles = readdirSync(routePath);
-
-routeFiles.forEach((file) => {
+readdirSync(routePath).forEach((file) => {
   if (file.endsWith('.js')) {
-    import(join(routePath, file)).then(module => {
+    import(join(routePath, file)).then((module) => {
       app.use('/api', module.default);
-    }).catch(err => {
+    }).catch((err) => {
       console.error(`Failed to load route file ${file}`, err);
     });
   }
