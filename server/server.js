@@ -1,6 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import { readdirSync } from 'fs/promises'; // Use fs/promises for modern syntax
+import { readdirSync } from 'fs'; // Use fs/promises for modern syntax
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import allowCors from './allowCors.js'; // Adjust path as necessary
