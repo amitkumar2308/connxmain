@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
 
-
+//now it is okay
 
 import User from "../server/models/user.js";
 import { hashPassword,comparePassword } from "../server/helpers/auth.js";
