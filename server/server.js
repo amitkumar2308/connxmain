@@ -1,9 +1,9 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import { readdirSync } from 'fs'; // Use fs/promises for modern syntax
+import cors from 'cors'; 
+import { readdirSync } from 'fs';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import allowCors from './allowCors.js'; // Adjust path as necessary
 
 dotenv.config();
 
@@ -19,19 +19,26 @@ app.use(morgan('dev'));
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// CORS middleware
-app.use(allowCors);
+// Correct CORS configuration
+const allowedOrigins = ["https://connx.vercel.app"];
+app.use(cors({
+    origin: (origin, callback) => {
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+}));
 
 // Autoload Routes
 (async () => {
     const routesPath = './routes';
     try {
-        const files = await readdirSync(routesPath);
-        for (const file of files) {
-            if (file.endsWith('.js')) {
-                const route = await import(`${routesPath}/${file}`);
-                app.use('/api', route.default);
-            }
+        for (const file of readdirSync(routesPath)) {
+            const route = await import(`${routesPath}/${file}`);
+            app.use('/api', route.default);
         }
     } catch (err) {
         console.error(`Error loading routes: ${err.message}`);
@@ -43,6 +50,9 @@ app.use((err, req, res, next) => {
     if (err.name === "UnauthorizedError") {
         console.log(err); // Log the error object
         return res.status(401).json({ error: "Unauthorized" });
+    }
+    if (err instanceof Error && err.message === 'Not allowed by CORS') {
+        return res.status(403).json({ error: 'CORS error' });
     }
     next();
 });
