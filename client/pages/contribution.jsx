@@ -116,7 +116,7 @@ const Home = () => {
       fetchUserPost();
       findPeople();
     } else {
-      router.push("/login");
+      router.push("/register");
     }
   }, []);
 
