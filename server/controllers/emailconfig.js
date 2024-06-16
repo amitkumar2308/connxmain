@@ -21,7 +21,7 @@ export const sendTokenEmail = async (email, token) => {
 
         // Construct the reset password link with token
         // Construct the reset password link with token and redirect parameter
-         const resetPasswordLink = `http://localhost:3000/reset?token=${token}&redirect=http://localhost:3000/forgot-password`;
+         const resetPasswordLink = `http://connx.vercel.app/reset?token=${token}&redirect=http://connx.vercel.app/forgot-password`;
 
 
         // Define the email options
