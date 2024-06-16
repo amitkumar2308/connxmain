@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS Configuration
 app.use(cors({
-    origin: "https://connx.vercel.app",  // Replace with your frontend URL
+    origin: '*',  // Allow requests from any origin
     methods: ["GET", "POST", "PUT", "DELETE"],  // Allow these methods
     allowedHeaders: ["Content-Type", "Authorization"],  // Allow these headers
 }));
@@ -43,6 +43,11 @@ readdirSync(routesPath).map((file) => {
             console.error(`Failed to import route file ${file}:`, err);
         });
     }
+});
+
+// Route handler for /api/hello endpoint
+app.get('/api/hello', (req, res) => {
+    res.send('Hello server');
 });
 
 // Error handling middleware
