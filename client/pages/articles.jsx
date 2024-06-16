@@ -22,7 +22,7 @@ const articles = [
     description: "Microsoft CEO Satya Nadella expressed his discomfort with the term 'Artificial Intelligence,' preferring a more nuanced understanding of the technology. Nadella highlighted the importance of AI in enhancing human productivity and shared Microsoft's vision for the future of AI and sustainability.",
     url: "https://www.hindustantimes.com/business/satya-nadella-does-not-like-the-term-artificial-intelligence-i-wish-we-called-it-101718274571527.html",
     urlToImage: "https://www.hindustantimes.com/ht-img/img/2024/06/13/550x309/US-tech-Microsoft-computers-AI-2_1718274638460_1718274658014.jpg",
-    publishedAt: currentDate
+    publishedAt: currentDate,
   },
   {
     title: "The Role of Artificial Intelligence in Career Counselling",
@@ -36,7 +36,7 @@ const articles = [
     description: "Qualcomm recently launched the Snapdragon 6s Gen 3 mobile platform, sparking debate due to its similarities to the 2021 Snapdragon 695. The new chipset reportedly boasts improvements in CPU, GPU, and AI performance, but details remain scarce.",
     url: "https://www.gizchina.com/2024/06/15/snapdragon-6s-gen-3-enhanced-upgrade-or-mere-rebrand/",
     urlToImage: "https://theroco.com/assets/2022/08/Snapdragon-6-Gen-1-leaks.jpg",
-    publishedAt: currentDate
+    publishedAt: currentDate,
 },
 
   // Add more articles as needed
