@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS Configuration
 app.use(cors({
-    origin: "http://connxserver-ar8xprrdv-amit-kumars-projects-6251eb47.vercel.app",  // Replace with your frontend URL
+    origin: "https://connx-git-main-amit-kumars-projects-6251eb47.vercel.app/",  // Replace with your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],  // Allow these methods
     allowedHeaders: ["Content-Type", "Authorization"],  // Allow these headers
 }));
