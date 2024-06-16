@@ -1,62 +1,54 @@
-import express from "express";
-import mongoose from "mongoose";
-import cors from "cors";
-import { readdirSync, existsSync } from "fs";
-import path from "path";
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
+import { readdirSync } from 'fs';
+import path from 'path';
 
-require("dotenv").config();
+dotenv.config();
 
 const app = express();
 
-// Middleware
+// Database connection
+mongoose.connect(process.env.DATABASE, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log("Database connected"))
+.catch((err) => console.log("DB connection error =>", err));
+
+// Middlewares
+app.use(morgan('dev'));
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // CORS Configuration
 app.use(cors({
-    origin: "http://connx.vercel.app",  // Update with your actual frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: "http://connx.vercel.app",  // Replace with your frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"],  // Allow these methods
+    allowedHeaders: ["Content-Type", "Authorization"],  // Allow these headers
 }));
 
-// Database connection
-mongoose.connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-    useCreateIndex: true
-}).then(() => console.log("Database connected"))
-  .catch((err) => console.log("DB connection error =>", err));
-
 // Autoload Routes
-const routesPath = path.join(__dirname, 'routes');
-if (existsSync(routesPath)) {
-    readdirSync(routesPath).map((routeFile) => {
-        if (routeFile.endsWith('.js')) {
-            const route = require(`./routes/${routeFile}`);
-            app.use('/api', route);
-        }
-    });
-} else {
-    console.error(`Error: Directory '${routesPath}' not found.`);
-}
+const routesPath = path.join(__dirname, 'routes'); // Construct absolute path to 'routes' folder
+
+readdirSync(routesPath).map((file) => {
+    if (file.endsWith('.js')) {
+        const route = require(path.join(routesPath, file));
+        app.use('/api', route.default);
+    }
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
     if (err.name === "UnauthorizedError") {
-        console.log(err);
+        console.log(err); // Log the error object
         return res.status(401).json({ error: "Unauthorized" });
     }
     next();
 });
 
-// Handling 404 errors
-app.use((req, res) => {
-    res.status(404).send("404 - Not Found");
-});
-
-// Listen on port
+// Listen
 const port = process.env.PORT || 8000;
-app.listen(port, () => {
-    console.log(`Server is running at port ${port}`);
-});
+app.listen(port, () => console.log(`Server is running at port ${port}`));
