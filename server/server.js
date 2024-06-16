@@ -8,7 +8,7 @@ import path from 'path';
 
 dotenv.config();
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname); // Define __dirname using import.meta.url
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const app = express();
 
@@ -27,18 +27,21 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS Configuration
 app.use(cors({
-    origin: "http://connx.vercel.app",  // Replace with your frontend URL
+    origin: "http://connxserver-ar8xprrdv-amit-kumars-projects-6251eb47.vercel.app",  // Replace with your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],  // Allow these methods
     allowedHeaders: ["Content-Type", "Authorization"],  // Allow these headers
 }));
 
 // Autoload Routes
-const routesPath = path.join(__dirname, 'routes'); // Construct absolute path to 'routes' folder
+const routesPath = path.join(__dirname, 'routes');
 
 readdirSync(routesPath).map((file) => {
     if (file.endsWith('.js')) {
-        const route = require(path.join(routesPath, file));
-        app.use('/api', route.default);
+        import(path.join(routesPath, file)).then(route => {
+            app.use('/api', route.default);
+        }).catch(err => {
+            console.error(`Failed to import route file ${file}:`, err);
+        });
     }
 });
 
