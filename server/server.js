@@ -8,6 +8,8 @@ import path from 'path';
 
 dotenv.config();
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname); // Define __dirname using import.meta.url
+
 const app = express();
 
 // Database connection
