@@ -37,7 +37,7 @@ const articles = [
     url: "https://www.gizchina.com/2024/06/15/snapdragon-6s-gen-3-enhanced-upgrade-or-mere-rebrand/",
     urlToImage: "https://theroco.com/assets/2022/08/Snapdragon-6-Gen-1-leaks.jpg",
     publishedAt: currentDate
-}
+},
 
   // Add more articles as needed
 ];
