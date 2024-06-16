@@ -1,10 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors'; 
-import { readdirSync, statSync } from 'fs';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import path from 'path';
 
 dotenv.config();
 
@@ -22,25 +20,26 @@ mongoose.connect(process.env.DATABASE, {
 app.use(morgan('dev'));
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
+
+// CORS configuration
+const allowedOrigins = [
+    'https://connx.vercel.app', // Add more origins as needed
+];
 app.use(cors({
-    origin: ["http://connx.vercel.app"],
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true, // Required for cookies, authorization headers with HTTPS
 }));
 
-// Autoload Routes
-const routesDirectory = './routes'; // Define the routes directory path
-
-try {
-    if (statSync(routesDirectory).isDirectory()) {
-        readdirSync(routesDirectory).forEach(async (file) => {
-            const route = await import(path.join(__dirname, routesDirectory, file));
-            app.use('/api', route.default);
-        });
-    } else {
-        console.log(`${routesDirectory} is not a directory.`);
-    }
-} catch (err) {
-    console.error(`Error reading directory '${routesDirectory}':`, err);
-}
+// Routes
+app.use('/api', require('./routes')); // Assuming your routes are defined in separate files
 
 // Error handling middleware
 app.use((err, req, res, next) => {
