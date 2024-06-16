@@ -1,8 +1,10 @@
+// server.js
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors'; 
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import routes from './routes'; // Import routes using ES modules
 
 dotenv.config();
 
@@ -39,7 +41,7 @@ app.use(cors({
 }));
 
 // Routes
-app.use('/api', require('./routes')); // Assuming your routes are defined in separate files
+app.use('/api', routes); // Use the imported routes
 
 // Error handling middleware
 app.use((err, req, res, next) => {
