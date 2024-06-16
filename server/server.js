@@ -54,6 +54,9 @@ app.use((err, req, res, next) => {
     next();
 });
 
-// Listen
+// Start server and display message upon successful start
 const port = process.env.PORT || 8000;
-app.listen(port, () => console.log(`Server is running at port ${port}`));
+app.listen(port, () => {
+    console.log(`Server is running at port ${port}`);
+    console.log(`Visit http://localhost:${port}/ to access the application.`);
+});
