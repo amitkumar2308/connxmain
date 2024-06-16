@@ -1,10 +1,10 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors';
-import { readdirSync } from 'fs';
+import cors from 'cors'; 
+import { readdirSync, statSync } from 'fs';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import { expressjwt } from 'express-jwt';
+import path from 'path';
 
 dotenv.config();
 
@@ -23,18 +23,24 @@ app.use(morgan('dev'));
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://connx.vercel.app"],
 }));
 
-// JWT Middleware
-app.use(expressjwt({ secret: process.env.JWT_SECRET, algorithms: ['HS256'] }).unless({ path: ['/api/login', '/api/register'] }));
-
 // Autoload Routes
-readdirSync('./routes').map((file) => {
-    import(`./routes/${file}`).then((route) => {
-        app.use('/api', route.default);
-    });
-});
+const routesDirectory = './routes'; // Define the routes directory path
+
+try {
+    if (statSync(routesDirectory).isDirectory()) {
+        readdirSync(routesDirectory).forEach(async (file) => {
+            const route = await import(path.join(__dirname, routesDirectory, file));
+            app.use('/api', route.default);
+        });
+    } else {
+        console.log(`${routesDirectory} is not a directory.`);
+    }
+} catch (err) {
+    console.error(`Error reading directory '${routesDirectory}':`, err);
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
