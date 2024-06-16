@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useContext } from 'react';
 import { Typography, Box, Card, CardContent, CardMedia, Divider, IconButton, Button } from '@mui/material';
 import { Share, ArrowForward } from '@mui/icons-material';
+import { UserContext } from '../context';
 
 const Home = () => {
   const [state, setState] = useContext(UserContext);
