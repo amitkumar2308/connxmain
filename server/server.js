@@ -1,10 +1,10 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors'; 
+import cors from 'cors';
 import { readdirSync } from 'fs';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-
+import { expressjwt } from 'express-jwt';
 
 dotenv.config();
 
@@ -26,13 +26,15 @@ app.use(cors({
     origin: ["http://localhost:3000"],
 }));
 
+// JWT Middleware
+app.use(expressjwt({ secret: process.env.JWT_SECRET, algorithms: ['HS256'] }).unless({ path: ['/api/login', '/api/register'] }));
+
 // Autoload Routes
-(async () => {
-    for (const file of readdirSync('./routes')) {
-        const route = await import(`./routes/${file}`);
+readdirSync('./routes').map((file) => {
+    import(`./routes/${file}`).then((route) => {
         app.use('/api', route.default);
-    }
-})();
+    });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
