@@ -5,7 +5,7 @@ const Index = () => {
   const router = useRouter(); // Initialize the router
 
   const handleRegisterNavigation = () => {
-    router.push('/register'); // Navigate to the register page
+    router.push('/contribution'); // Navigate to the register page
   };
 
   return (
