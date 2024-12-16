@@ -7,9 +7,17 @@ import axios from "axios";
 import { RollbackOutlined } from "@ant-design/icons";
 import Link from "next/link";
 
+interface User {
+  _id: string;
+  username: string;
+  image?: {
+    url: string;
+  };
+}
+
 const Follower = () => {
   const [state, setState] = useContext(UserContext);
-  const [people, setPeople] = useState([]);
+  const [people, setPeople] = useState<User[]>([]); // Define the state type explicitly
 
   const router = useRouter();
 
@@ -23,7 +31,7 @@ const Follower = () => {
   // fetch following users from backend
   const fetchFollowing = async () => {
     try {
-      const { data } = await axios.get("/user-followers");
+      const { data } = await axios.get<User[]>("/user-followers");
       console.log("followers => ", data);
       setPeople(data);
     } catch (error) {
@@ -32,7 +40,7 @@ const Follower = () => {
   };
 
   // function to show profile image if user uploaded
-  const imageSource = (user) => {
+  const imageSource = (user: User) => {
     if (user.image) {
       return user.image.url;
     } else {
@@ -41,12 +49,12 @@ const Follower = () => {
   };
 
   // when user clicks on unfollow
-  const handleUnfollow = async (user) => {
+  const handleUnfollow = async (user: User) => {
     try {
       const { data } = await axios.put('/user-unfollow', { _id: user._id });
 
       // update localStorage --> update user
-      let auth = JSON.parse(localStorage.getItem("auth"));
+      let auth = JSON.parse(localStorage.getItem("auth") || "{}");
       auth.user = data;
       localStorage.setItem('auth', JSON.stringify(auth));
 
@@ -64,7 +72,6 @@ const Follower = () => {
 
   return (
     <div className="row col-md-6 offset-md-3">
-      {/* <pre>{JSON.stringify(people,null,4)}</pre> */}
       <List
         itemLayout="horizontal"
         dataSource={people}
