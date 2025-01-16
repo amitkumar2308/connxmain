@@ -1,10 +1,9 @@
 import { useContext, useState } from "react";
+import { UserContext } from "../context/index.jsx";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Link from "next/link";
-import AuthForm from "../components/forms/AuthForm";
+import AuthForm from "../components/forms/AuthForm.jsx";
 import { useRouter } from "next/router";
-import { UserContext } from "../context";
 import logo from "../public/connXblack.png";
 import Image from "next/image";
 const Login = () => {
@@ -22,7 +21,7 @@ const Login = () => {
       // console.log(name, email, password, secret);
       setLoading(true);
       const { data } = await axios.post(
-        `/login`,
+        '/login',
         {
           email,
           password,
@@ -36,7 +35,7 @@ const Login = () => {
       });
       // save in local storage
       window.localStorage.setItem('auth',JSON.stringify(data));
-      router.push("/");
+      router.push("/contribution");
     } catch (err) {
       if (err.response && err.response.data) {
         
@@ -51,7 +50,7 @@ const Login = () => {
     }
   };
   // If user is already authenticated, redirect to the homepage
-  if (state && state.token) router.push("/");
+  if (state && state.token) router.push("/contribution");
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
