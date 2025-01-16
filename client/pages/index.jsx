@@ -12,7 +12,8 @@ const Index = () => {
   return (
     <>
       <Head>
-        <title>Build a Community of Thinkers and Dreamers</title>
+      <title>Connx - Build a Community of Thinkers and Dreamers</title>
+        <meta name="description" content="Connx helps thinkers and dreamers unleash their ideas and collaborate in a vibrant community. Join Connx today!"/>
         <meta name="description" content="Join our community to unleash your thoughts and ideas with people ready to listen, engage, and collaborate." />
         <meta name="keywords" content="community, thinkers, dreamers, collaborate, connect" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
