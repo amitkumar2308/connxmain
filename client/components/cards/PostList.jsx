@@ -155,9 +155,9 @@ const PostList = ({
                   <CommentIcon />
                 </IconButton>
                 <span>
-                  <Link href={`/post/${post._id}`}>
+                 
                     {post.comments.length} comments
-                  </Link>
+                 
                 </span>
               </div>
               {state?.user._id === post.postedBy._id && (
