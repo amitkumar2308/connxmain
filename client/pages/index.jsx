@@ -12,18 +12,17 @@ const Index = () => {
   return (
     <>
       <Head>
-      <title>Connx - Build a Community of Thinkers and Dreamers</title>
-        <meta name="description" content="Connx helps thinkers and dreamers unleash their ideas and collaborate in a vibrant community. Join Connx today!"/>
-        <meta name="description" content="Join our community to unleash your thoughts and ideas with people ready to listen, engage, and collaborate." />
-        <meta name="keywords" content="community, thinkers, dreamers, collaborate, connect" />
+        <title>Connx - Showcase Your Talent, Skills, and Services</title>
+        <meta name="description" content="Connx is a platform to share your videos, showcase your skills, and sell your talent services to clients worldwide. Join Connx today!"/>
+        <meta name="keywords" content="talent, skills, showcase, sell services, platform, video sharing, clients" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta property="og:title" content="Build a Community of Thinkers and Dreamers" />
-        <meta property="og:description" content="Unleash your thoughts and ideas with a community ready to listen, engage, and collaborate." />
+        <meta property="og:title" content="Showcase Your Talent, Skills, and Services" />
+        <meta property="og:description" content="Share your videos, showcase your skills, and connect with clients to sell your talent services worldwide." />
         <meta property="og:image" content="/og-image.png" />
         <meta property="og:url" content="https://connx.in" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Build a Community of Thinkers and Dreamers" />
-        <meta name="twitter:description" content="Unleash your thoughts and ideas with a community ready to listen, engage, and collaborate." />
+        <meta name="twitter:title" content="Showcase Your Talent, Skills, and Services" />
+        <meta name="twitter:description" content="Share your videos, showcase your skills, and connect with clients to sell your talent services worldwide." />
         <meta name="twitter:image" content="/og-image.png" />
         <link rel="canonical" href="https://connx.in" />
       </Head>
@@ -41,19 +40,19 @@ const Index = () => {
         />
         <div className="relative z-10 px-4 sm:px-8">
           <h1 className="font-inter font-extrabold text-4xl sm:text-6xl lg:text-8xl text-center pt-20 sm:pt-36">
-            Let's build a community
+            Showcase Your Talent
             <br />
-            of thinkers and dreamers
+            Skills, and Services
           </h1>
           <h6 className="text-center font-mono p-4 sm:p-8 text-base sm:text-xl animate-fadeIn">
-            Unleash your thoughts and ideas with a community ready to listen, engage, and collaborate
+            Share your videos, connect with clients, and monetize your unique skills and services on Connx
           </h6>
           <div className="flex justify-center">
             <button
               onClick={handleRegisterNavigation}
               className="font-inter font-semibold text-white text-center bg-black p-3 w-64 sm:w-80 text-lg sm:text-2xl rounded-full hover:scale-105"
             >
-              Let's Connect
+              Get Started
             </button>
           </div>
           <h6 className="text-center mt-8 text-sm sm:text-base">Made By Amit Kumar</h6>
