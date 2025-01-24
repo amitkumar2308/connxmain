@@ -21,7 +21,7 @@ const UserProvider = ({ children }) => {
 
     // Adding token in the config
     const token = state && state.token ? state.token : "";
-    axios.defaults.baseURL = 'https://connxserver.vercel.app/api';
+    axios.defaults.baseURL = 'https://connxserver.onrender.com/api';
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
     // Adding axios interceptor to handle response errors
