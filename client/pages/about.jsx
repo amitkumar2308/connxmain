@@ -27,7 +27,7 @@ const About = () => {
         </p>
         <br />
         <p className="font-bold">Amit Kumar Gupta</p>
-        <p className="text-sm text-gray-500">Founder of ConnX</p>
+        <p className="text-sm text-gray-500">Co-Founder of ConnX</p>
       </div>
     </div>
   );
