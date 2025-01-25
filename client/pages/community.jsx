@@ -25,25 +25,7 @@ const Community = () => {
               height={900} // Specify the height of the image
             />
           </div>
-          <div className="p-8">
-            <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
-              Join Our Team
-            </div>
-            <p className="block mt-1 text-lg leading-tight font-medium text-black">
-              Looking for a Co-founder for Connx
-            </p>
-            <p className="mt-2 text-gray-600">
-              We are seeking a highly motivated and experienced individual to join us as a co-founder for Connx. If you are passionate about building innovative solutions and driving growth in the tech industry, we'd love to hear from you.
-            </p>
-            <div className="mt-4">
-              <button
-                className="inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-black hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition ease-in-out duration-150"
-                onClick={handleMailClick}
-              >
-                <Mail className="h-5 w-5 mr-2" />
-                Connect via Email
-              </button>
-            </div>
+          
           </div>
         </div>
       </div>
