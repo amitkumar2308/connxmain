@@ -19,15 +19,12 @@ const About = () => {
         <h1 className="text-3xl font-semibold mb-4">Our Vision</h1>
         <hr className="mb-4" />
         <p className="text-justify">
-          I'm Amit Kumar Gupta, founder of ConnX, a platform driven by a vision to empower individuals by keeping them at the forefront of the ever-evolving technological landscape. ConnX doesn't just deliver daily updates on the latest trends and developments in the tech world; it fosters a vibrant and collaborative community.
-
-          ConnX recognizes that learning goes beyond passively consuming information. Our platform provides a space where users can not only stay informed but also actively engage with their peers. They can troubleshoot coding challenges by seeking and offering solutions from a network of fellow users. This interactive environment fosters a spirit of mutual support, allowing everyone to learn from each other's experiences and accelerate their technical growth.
-
-          At ConnX, we believe that collaboration is the key to unlocking true potential. By working together, sharing knowledge, and supporting one another, our user community can achieve far greater things than any individual could alone. ConnX is more than just a platform; it's a springboard for collective innovation and advancement in the exciting world of technology.
+          ConnX.in is a revolutionary video-based freelance platform built with a mission to <strong>give every new freelancer a fair chance</strong>. At ConnX, we believe that talent shouldn't be buried under a lack of 5-star reviews or limited visibility.
+          <br /><br />
+          Unlike traditional freelance platforms that prioritize profiles with high ratings and long histories, ConnX opens the door for fresh talent to <strong>showcase their skills through video-based pitches</strong>, real-time work previews, and interactive project demos. This allows clients to connect with freelancers <strong>based on potential and real skill</strong>, not just numbers.
+          <br /><br />
+          We aim to level the playing field — making freelancing more human, transparent, and opportunity-driven. ConnX is more than just a marketplace; it’s a <strong>community that champions newcomers</strong>, fosters collaboration, and drives innovation through trust and transparency.
         </p>
-        <br />
-        <p className="font-bold">Amit Kumar Gupta</p>
-        <p className="text-sm text-gray-500">Co-Founder of ConnX</p>
       </div>
     </div>
   );
