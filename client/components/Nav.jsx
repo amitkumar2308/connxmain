@@ -1,13 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { UserContext } from "../context";
-import MenuIcon from "@mui/icons-material/Menu";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import LogoutIcon from "@mui/icons-material/Logout";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import blackLogoImage from "../public/connXblack.png";
 import {
   AppBar,
   Toolbar,
@@ -18,148 +9,245 @@ import {
   List,
   ListItem,
   ListItemText,
-  Menu,
-  MenuItem,
   Container,
+  MenuItem,
+  Menu,
 } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import Image from "next/image";
+import Link from "next/link";
+import blackLogoImage from "../public/connXblack.png";
+import { UserContext } from "../context"; // Import your user context
+import { useRouter } from "next/router";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import LogoutIcon from "@mui/icons-material/Logout";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-const Navbar = () => {
+const Nav = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [state, setState] = useContext(UserContext); // Get the authentication state from context
   const [anchorEl, setAnchorEl] = useState(null);
-  const [state, setState] = useContext(UserContext);
   const router = useRouter();
 
-  // Validate token on load
+  // Validate stored auth data on page load
   useEffect(() => {
     const auth = JSON.parse(window.localStorage.getItem("auth"));
     if (auth && auth.token) {
-      try {
-        const payload = JSON.parse(atob(auth.token.split(".")[1]));
-        if (payload.exp > Date.now() / 1000) setState(auth);
-        else window.localStorage.removeItem("auth");
-      } catch {
-        window.localStorage.removeItem("auth");
+      const isTokenValid = () => {
+        try {
+          const payload = JSON.parse(atob(auth.token.split(".")[1]));
+          return payload.exp > Date.now() / 1000; // Check token expiration
+        } catch (error) {
+          return false; // Invalid token format
+        }
+      };
+      if (isTokenValid()) {
+        setState(auth);
+      } else {
+        window.localStorage.removeItem("auth"); // Remove expired token
+        setState(null);
       }
+    } else {
+      setState(null);
     }
   }, []);
 
+  const handleDrawerOpen = () => setOpenDrawer(true);
+  const handleDrawerClose = () => setOpenDrawer(false);
+
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+
   const logout = () => {
-    window.localStorage.removeItem("auth");
-    setState(null);
-    router.push("/login");
+    window.localStorage.removeItem("auth"); // Clear auth from storage
+    setState(null); // Reset state
+    router.push("/login"); // Redirect to login page
   };
 
   return (
-    <AppBar
-      position="fixed"
-      sx={{ background: "black", boxShadow: "0 2px 10px rgba(255,255,255,0.1)" }}
-    >
+    <AppBar position="static" color="primary" sx={{ backgroundColor: "#FFFF" }}>
       <Container maxWidth="lg">
         <Toolbar>
-          {/* Logo */}
-          <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
             <Link href="/">
-              <Image src={blackLogoImage} alt="Connx Logo" width={120} height={30} />
+              <Image src={blackLogoImage} alt="Logo" width={100} height={22} />
             </Link>
-          </Box>
-
-          {/* Desktop Menu */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
-            <Button component={Link} href="/" sx={{ color: "white", fontWeight: 500 }}>Home</Button>
-            <Button component={Link} href="/contribution" sx={{ color: "white", fontWeight: 500 }}>Become Contributor</Button>
-            <Button component={Link} href="/about" sx={{ color: "white", fontWeight: 500 }}>About</Button>
-            <Button component={Link} href="/community" sx={{ color: "white", fontWeight: 500 }}>Community</Button>
-            {state ? (
-              <Button
-                onClick={(e) => setAnchorEl(e.currentTarget)}
-                sx={{
-                  background: "white",
-                  color: "black",
-                  borderRadius: "30px",
-                  px: 3,
-                  fontWeight: 600,
-                  textTransform: "none",
-                  "&:hover": { background: "#e5e5e5" },
-                }}
-              >
-                {state.user?.username}
-              </Button>
-            ) : (
+            <Box sx={{ display: { xs: "none", md: "flex" }, flexGrow: 1 }}>
               <Button
                 component={Link}
-                href="/register"
+                href="/"
                 sx={{
-                  background: "white",
                   color: "black",
-                  borderRadius: "30px",
-                  px: 3,
-                  fontWeight: 600,
                   textTransform: "none",
-                  "&:hover": { background: "#e5e5e5" },
+                  marginRight: "10px",
                 }}
               >
-                Login / Register
+                Home
               </Button>
-            )}
+              <Button
+                component={Link}
+                href="/contribution"
+                sx={{
+                  color: "black",
+                  textTransform: "none",
+                  marginRight: "10px",
+                }}
+              >
+                Become Contributor
+              </Button>
+              <Button
+                component={Link}
+                href="/about"
+                sx={{
+                  color: "black",
+                  textTransform: "none",
+                  marginRight: "10px",
+                }}
+              >
+                About
+              </Button>
+              <Button
+                component={Link}
+                href="/community"
+                sx={{
+                  color: "black",
+                  textTransform: "none",
+                  marginRight: "10px",
+                }}
+              >
+                Community
+              </Button>
+            </Box>
+            <Box sx={{ display: { xs: "none", md: "flex" } }}>
+              {state ? (
+                <Button
+                  onClick={handleMenuOpen}
+                  sx={{
+                    backgroundColor: "#0070f3",
+                    color: "#fff",
+                    textTransform: "none",
+                    fontWeight: 500,
+                    padding: "0.5rem 1.5rem",
+                    borderRadius: "20px",
+                    "&:hover": { backgroundColor: "#005bb5" },
+                  }}
+                >
+                  {state.user && state.user.username}
+                </Button>
+              ) : (
+                <Button
+                  component={Link}
+                  href="/register"
+                  sx={{
+                    backgroundColor: "#0070f3",
+                    color: "#fff",
+                    textTransform: "none",
+                    fontWeight: 500,
+                    padding: "0.5rem 1.5rem",
+                    borderRadius: "20px",
+                    "&:hover": { backgroundColor: "#005bb5" },
+                  }}
+                >
+                  Login/Register
+                </Button>
+              )}
+            </Box>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="end"
+              onClick={handleDrawerOpen}
+              sx={{ display: { xs: "block", md: "none" }, marginRight: "10px" }}
+            >
+              <MenuIcon sx={{ color: "black" }} />
+            </IconButton>
           </Box>
-
-          {/* Mobile Menu */}
-          <IconButton
-            edge="end"
-            onClick={() => setOpenDrawer(true)}
-            sx={{ display: { xs: "block", md: "none" }, color: "white" }}
-          >
-            <MenuIcon />
-          </IconButton>
+          {state && (
+            <Box sx={{ display: { xs: "block", md: "none" } }}>
+              <IconButton
+                onClick={handleMenuOpen}
+                sx={{
+                  color: "black",
+                  padding: "6px",
+                  marginRight: "10px",
+                  marginTop: "5px",
+                }}
+              >
+                <AccountCircleIcon />
+              </IconButton>
+              <Menu
+                id="user-menu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+              >
+                <MenuItem
+                  component={Link}
+                  href="/dashboard"
+                  onClick={handleMenuClose}
+                >
+                  <DashboardIcon sx={{ marginRight: "10px" }} />
+                  Dashboard
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  href="/user/profile/update"
+                  onClick={handleMenuClose}
+                >
+                  <AccountCircleIcon sx={{ marginRight: "10px" }} />
+                  My Profile
+                </MenuItem>
+                <MenuItem onClick={logout}>
+                  <LogoutIcon sx={{ marginRight: "10px" }} />
+                  Logout
+                </MenuItem>
+              </Menu>
+            </Box>
+          )}
         </Toolbar>
       </Container>
-
-      {/* Drawer for Mobile */}
-      <Drawer anchor="right" open={openDrawer} onClose={() => setOpenDrawer(false)}>
-        <List sx={{ width: 240 }}>
-          <ListItem button component={Link} href="/">
+      <Drawer anchor="right" open={openDrawer} onClose={handleDrawerClose}>
+        <List>
+          <ListItem button component={Link} href="/" onClick={handleDrawerClose}>
             <ListItemText primary="Home" />
           </ListItem>
-          <ListItem button component={Link} href="/contribution">
+          <ListItem
+            button
+            component={Link}
+            href="/contribution"
+            onClick={handleDrawerClose}
+          >
             <ListItemText primary="Become Contributor" />
           </ListItem>
-          <ListItem button component={Link} href="/about">
+          <ListItem button component={Link} href="/about" onClick={handleDrawerClose}>
             <ListItemText primary="About" />
           </ListItem>
-          <ListItem button component={Link} href="/community">
+          <ListItem
+            button
+            component={Link}
+            href="/community"
+            onClick={handleDrawerClose}
+          >
             <ListItemText primary="Community" />
           </ListItem>
           {state ? (
-            <>
-              <ListItem button component={Link} href="/dashboard">
-                <DashboardIcon fontSize="small" sx={{ mr: 1 }} /> Dashboard
-              </ListItem>
-              <ListItem button onClick={logout}>
-                <LogoutIcon fontSize="small" sx={{ mr: 1 }} /> Logout
-              </ListItem>
-            </>
+            <ListItem button onClick={logout}>
+              <ListItemText primary="Logout" />
+            </ListItem>
           ) : (
-            <ListItem button component={Link} href="/register">
-              <ListItemText primary="Login / Register" />
+            <ListItem
+              button
+              component={Link}
+              href="/register"
+              onClick={handleDrawerClose}
+            >
+              <ListItemText primary="Login/Register" />
             </ListItem>
           )}
         </List>
       </Drawer>
-
-      {/* Profile Menu */}
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-        <MenuItem component={Link} href="/dashboard" onClick={() => setAnchorEl(null)}>
-          <DashboardIcon fontSize="small" sx={{ mr: 1 }} /> Dashboard
-        </MenuItem>
-        <MenuItem component={Link} href="/user/profile/update" onClick={() => setAnchorEl(null)}>
-          <AccountCircleIcon fontSize="small" sx={{ mr: 1 }} /> My Profile
-        </MenuItem>
-        <MenuItem onClick={logout}>
-          <LogoutIcon fontSize="small" sx={{ mr: 1 }} /> Logout
-        </MenuItem>
-      </Menu>
     </AppBar>
   );
 };
 
-export default Navbar;
+export default Nav;
