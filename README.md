@@ -633,7 +633,7 @@ This project is licensed under the ISC License - see the LICENSE file for detail
 
 **Amit Kumar**
 - GitHub: [@amitkumar2308](https://github.com/amitkumar2308)
-- Email: your-email@example.com
+- Email: amitk.developer23@gmail.com
 
 ---
 
@@ -668,7 +668,7 @@ Give a ⭐️ if this project helped you!
 
 Have questions? Create an issue or reach out:
 - GitHub Issues: [Create Issue](https://github.com/amitkumar2308/connxmain/issues)
-- Email: your-email@example.com
+- Email: amitk.developer23@gmail.com
 
 ---
 
